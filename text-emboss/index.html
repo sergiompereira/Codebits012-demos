@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt">
+	<head>
+		<meta  charset="utf-8" />
+		
+		<script src="js/smp/smp.js"></script>
+		<script src="js/smp/MathUtils.js"></script>
+		<script src="js/smp/ColorUtils.js"></script>
+		<script src="js/smp/BitmapData.js"></script>
+		
+		<style type="text/css">
+			body{
+				margin:0;
+                text-align:center;
+			
+			}
+			canvas{
+				cursor:pointer;
+			}
+            *{
+                margin:0 auto;
+            }
+            form{
+                margin:30px;
+            }
+		</style>
+		
+		<title></title>
+		
+	</head>
+	<body>
+	
+	<form>
+		<input type="text" name="word" /><input type="submit" value="Escrever" />
+	</form>
+	
+		<script type="text/javascript">
+			
+			var form = document.getElementsByTagName("form")[0];
+			var img = new Image(),canvas,ctx,txtcanvas,txtctx,w,h;
+			img.src = "userfiles/granito2.jpg";
+			
+			img.addEventListener("load", function(){
+				
+				canvas = document.createElement("canvas");
+				txtcanvas = document.createElement("canvas");
+				w = canvas.width = txtcanvas.width = img.width*2;
+				h = canvas.height = txtcanvas.height = img.height;
+				ctx = canvas.getContext("2d");
+				txtctx = txtcanvas.getContext("2d");
+				
+				ctx.drawImage(img,0,0,w/2,h);
+				ctx.drawImage(img,w/2,0,w/2,h);
+				
+				var originalData = ctx.getImageData(0,0,w,h);
+				var mapData;		
+				
+				document.body.appendChild(canvas);
+				
+				txtctx.fillStyle="#ffffff";
+				txtctx.font = 'italic 800 300px/2 Georgia';
+				txtctx.textAlign = "center";
+				
+				var bmp = new smp.canvas.BitmapData(originalData);
+				bmp.addEventListener("UPDATE",onDataReady);
+				
+				form.addEventListener("submit",onInputChange);
+
+				
+				function onInputChange(evt){
+					evt.preventDefault();
+					drawText(form.elements[0].value);
+					return false;
+				}
+				
+				function drawText(text){
+					txtctx.clearRect(0,0,w,h)
+					txtctx.fillText(text, w/2, h/2+100);
+					mapData = txtctx.getImageData(0,0,w,h);
+					
+					bmp.clearFilters();
+					bmp.addFilter("emboss",4,1,0,mapData);
+					bmp.processFilters();
+				}
+				
+				
+				function onDataReady(evt){
+					ctx.putImageData(evt.data, 0,0);
+				}
+	
+			
+			})
+		</script>
+	</body>
+</html>

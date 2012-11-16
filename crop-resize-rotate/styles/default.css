@@ -1,0 +1,52 @@
+img{
+}
+#image-container{
+	position:relative;
+	border:5px dashed #dddddd;
+	width:600px;
+	height:400px;
+	display:inline-block;
+    text-align:center;
+}
+#image-container span{
+    font-family:Helvetica, Arial, sans-serif;
+    font-size:30px;
+    color:#ddd;
+    margin-top:50px;
+
+}
+#image-container img{
+	cursor:se-resize;
+}
+div.layer{
+	border:3px dotted #ccff00;
+	position:absolute;
+	cursor:move;
+	cursor:hand;
+ 	cursor:grab;
+  	cursor:-moz-grab;
+  	cursor:-webkit-grab;
+	rotation-point:50% 50%;
+	
+}
+div.layer div.rotate-icon{
+	width:10px;
+	height:10px;
+	position:absolute;
+	top:50%;
+	left:50%;
+	margin:-5px 0 0 -5px;
+	
+	border:1px solid #ccff00;
+	background-color:#ccff00;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    border-radius: 20px;
+
+}
+canvas{
+	border:5px solid #bbb;
+	display:inline-block;
+	cursor:pointer;
+}

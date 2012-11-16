@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt">
+	<head>
+		<meta  charset="utf-8" />
+		
+		<script src="js/smp/smp.js"></script>
+		<script src="js/EventDispatcher.js"></script>
+		<script src="js/EnterFrame.js"></script>
+		<script src="js/smp/MathUtils.js"></script>
+		<script src="js/smp/ColorUtils.js"></script>
+		<script src="js/smp/BitmapData.js"></script>
+		<script src="js/smp/BitmapEffect.js"></script>
+		
+		<style type="text/css">
+			body{
+				margin:0;
+                text-align:center;
+			
+			}
+			canvas{
+				cursor:pointer;
+                margin:0 auto;
+			}
+		</style>
+		
+		<title></title>
+		
+	</head>
+	<body>
+	
+	
+		<script type="text/javascript">
+			
+			var img = new Image(),canvas,ctx,w,h;
+			img.src = "userfiles/belem.jpg";
+			
+			img.addEventListener("load", function(){
+				
+				canvas = document.createElement("canvas");
+				w = canvas.width = img.width;
+				h = canvas.height = img.height;
+				ctx = canvas.getContext("2d");
+				ctx.drawImage(img,0,0,img.width,img.height);
+				document.body.appendChild(canvas);
+				var originalData = ctx.getImageData(0,0,w,h);
+				var effect = new BitmapEffect("ripple");
+				//ctx.putImageData(effect.process(ctx.getImageData(0,0,w,h)),0,0);
+
+				var phase, mouseX, mouseY,displacement = 10, size = 20, rippleWidth = 10,light=0.5;
+				var dropsColl = [];
+				//gets the left and top position relative to the page of the matching element (if absolutely positioned)
+				var editorOffset = {left:canvas.offsetLeft, top:canvas.offsetTop};
+				
+				canvas.addEventListener("mousedown", function(e) {
+					dropsColl.push({
+						position:  {x:Math.floor(e.pageX-editorOffset.left),
+									y:Math.floor(e.pageY-editorOffset.top)},
+						displacement:displacement,
+						size:size,
+						rippleWidth:rippleWidth,
+						phase:0,
+						light:light
+					});		
+				});
+				EnterFrame.addEventListener("ENTER_FRAME", onEnterFrame);
+				
+				
+				function onEnterFrame(evt){
+					if(dropsColl.length>0){
+						var i;
+						for(i=0; i<dropsColl.length;i++){
+							var drop = dropsColl[i];
+							drop.displacement-=0.2;
+							if(drop.displacement < 0){
+								drop.displacement = 0;
+							}
+							drop.light = light*drop.displacement/displacement;
+							drop.size+=2;
+							drop.rippleWidth+=1;
+							drop.phase+=0.5;
+							var position = drop.position;
+							var size = drop.size;
+							
+							ctx.putImageData(effect.process(originalData, 
+								position,
+								drop.displacement,drop.size,drop.rippleWidth,drop.phase,null,drop.light),0,0,position.x-size,position.y-size,size*2,size*2);
+							
+							if(drop.displacement == 0){
+								dropsColl.splice(i,1);
+							}
+						}
+						
+					}
+					
+				}
+			
+			})
+		</script>
+	</body>
+</html>
